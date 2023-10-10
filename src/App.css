@@ -1,0 +1,25 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+div {
+  width: 100%;
+}
+
+.inputs {
+  padding: 5px;
+  width: 98.7%;
+}
+
+table {
+  width: 100%;
+}
+
+
+.input {
+  border-left: 2.5px solid red;
+  border-right: none;
+  border-top: none;
+  border-bottom: none;
+}
