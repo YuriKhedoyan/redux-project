@@ -6,7 +6,7 @@ import { combineReducers } from "@reduxjs/toolkit";
 import { persistStore } from 'redux-persist';
 
 const persistConfig = {
-  key: "root",
+  key: "posts",
   version: 1,
   storage
 }

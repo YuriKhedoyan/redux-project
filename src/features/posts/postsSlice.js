@@ -10,11 +10,11 @@ const postsSlice = createSlice({
       reducer(state, action) {
         state.push(action.payload)
       },
-      prepare(title, index) {
+      prepare (index, value) {
         return {
           payload: {
             index,
-            title,
+            value,
           }
         }
       }
