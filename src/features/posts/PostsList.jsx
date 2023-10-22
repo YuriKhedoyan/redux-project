@@ -1,65 +1,91 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux'
-import { postAdded } from './postsSlice.js'
-
-
-import '../../App.css'
+import { useSelector, useDispatch } from 'react-redux';
+import { postAdded, postUpdated } from './postsSlice';
+import './PostsList.css';
 
 const PostsList = () => {
-  const [inputs, setInputs] = useState(['']);
-  const posts = [];
-  const a = useSelector((state) => {
-    console.log(state.posts)
-    return state.posts
-  });
+  const posts = useSelector((state) => state.posts);
+  const dispatch = useDispatch();
 
-  const postsIndex = []
-  const dispatch = useDispatch()
-
-  const updateInput = (index, value) => {
-    const newInputs = [...inputs];
-    newInputs[index] = value;
-
-    if (index === inputs.length - 1 && value.trim() !== '') {
-      newInputs.push('');
-    }
-
-    setInputs(newInputs);
-  };
-
-  posts.forEach(el => {
-    postsIndex.push(el.index)
-  })
+  const [newInputValue, setNewInputValue] = useState('');
 
   const handleInputBlur = (index, value) => {
-    debugger
-    value = value.trim();
-    console.log(postsIndex, postsIndex.includes(index))
-    if (postsIndex.includes(index)) {
-      posts[index].value = value;
-      console.log(posts, "posts", posts[index], index, "Index", value, "value")
-      console.log("UPDATE !")
-    } else if (value.length !== 0) {
-      posts.push({ index, value });
-      console.log('Dispatched !')
-      dispatch(postAdded(posts[index]));
-      console.log(posts[index])
+    if (value.trim() === '') {
+      if (index < posts.length) {
+        dispatch(postUpdated({ index, value: null }));
+      }
+    } else {
+      if (index < posts.length) {
+        dispatch(postUpdated({ index, value }));
+      } else {
+        dispatch(postAdded({ index: posts.length, value }));
+      }
     }
   };
 
+  const handleInputChange = (index, value) => {
+    const newPosts = [...posts];
+
+    if (newPosts[index]) {
+      newPosts[index] = { ...newPosts[index], value };
+    } else if (value.trim() !== '') {
+      newPosts.push({ value });
+    }
+
+    dispatch(postUpdated({ index, value }));
+  };
+
+  const handleNewInputChange = (value) => {
+    setNewInputValue(value);
+  };
+
+  const handleNewInputBlur = () => {
+    if (newInputValue.trim() !== '') {
+      dispatch(postAdded({ index: posts.length, value: newInputValue }));
+      setNewInputValue('');
+    }
+  };
 
   return (
     <div>
-      {inputs.map((input, index) => (
+      {posts.map((post, index) => (
         <div key={index}>
           <table>
-            <tr>
-              <td className='row'><input value={index + 1} disabled className='inputs' /></td>
-              <td className='input'><input key={index} type="text" value={input} onBlur={e => handleInputBlur(index, e.target.value)} onChange={(e) => updateInput(index, e.target.value)} className='inputs' id="postTitle" name="postTitle" multiline label="postTitle" /></td>
-            </tr>
+            <tbody>
+              <tr>
+                <td className='row'><input value={index + 1} disabled className='inputs' /></td>
+                <td className='input'>
+                  <input
+                    type="text"
+                    className='inputs'
+                    value={post.value || ''}
+                    onBlur={(e) => handleInputBlur(index, e.target.value)}
+                    onChange={(e) => handleInputChange(index, e.target.value)}
+                  />
+                </td>
+              </tr>
+            </tbody>
           </table>
         </div>
       ))}
+      <div>
+        <table>
+          <tbody>
+            <tr>
+              <td className='row'><input value={posts.length + 1} disabled className='inputs' /></td>
+              <td className='input'>
+                <input
+                  type="text"
+                  className='inputs'
+                  value={newInputValue}
+                  onBlur={handleNewInputBlur}
+                  onChange={(e) => handleNewInputChange(e.target.value)}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
