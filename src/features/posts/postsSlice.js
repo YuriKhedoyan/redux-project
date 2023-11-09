@@ -1,25 +1,22 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = [{value: ""}];
+const initialState = [{ value: "", order: 1 }];
 
 const postsSlice = createSlice({
-  name: 'posts',
+  name: "posts",
   initialState,
   reducers: {
     updatePost: (state, action) => {
-      const { index, value } = action.payload;
-      console.log(action)
+      const { index, value, order } = action.payload;
       const posts = state;
 
       if (value === "" && posts.length > 1) {
-        console.log(index, value, posts)
         return posts.filter((el, ind) => ind !== index);
       } else if (index === posts.length - 1 && value.length === 1) {
-        posts.push({value: ""});
+        posts.push({ value: "", order: index + 2 });
       }
-
       posts[index].value = value;
-    }
+    },
   },
 });
 
